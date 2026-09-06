@@ -4,32 +4,35 @@ Choose the host first. Unreal Engine and Blender use different local components 
 
 ## Blender
 
-StudioTwin's Blender workflow is live on the official Blender MCP baseline.
+StudioTwin's Blender workflow uses two add-ons: StudioTwin for generation and import, and the third-party MCP for Blender add-on for agent control.
 
 Requirements:
 
-- Blender 5.1 or newer;
-- Blender Lab's Extensions repository: `https://lab.blender.org/`;
-- the MCP add-on installed and enabled in Blender;
+- Blender 4.2 or newer for the StudioTwin add-on;
+- the StudioTwin Blender add-on release package;
+- a StudioTwin-supported MCP for Blender release;
+- the MCP for Blender add-on installed and enabled;
 - the `blender-mcp` server configured in the MCP client;
 - a StudioTwin account and `st_` API key supplied through the connector configuration, never through chat.
 
-Install the add-on:
+Install StudioTwin:
 
-1. Open Blender Preferences and go to Extensions.
-2. Add the Blender Lab repository using `https://lab.blender.org/`.
-3. Find the MCP extension, install it, and enable it.
-4. Open the add-on preferences. Confirm the local host and port, then start the server or enable auto-start.
+1. Download the StudioTwin Blender add-on zip supplied with the release.
+2. Open **Edit > Preferences > Add-ons > Install** and select the zip.
+3. Enable **StudioTwin**.
+4. Open the StudioTwin preferences and enter the API key. The default production API URL is `https://api.studiotwin.ai`.
 
-Install the MCP server from source when the client does not provide an MCPB package:
+Install MCP for Blender:
 
 ```bash
-pip install git+https://projects.blender.org/lab/blender_mcp.git#subdirectory=mcp
+uvx blender-mcp install-addon
 ```
 
-Follow [Blender Lab's MCP documentation](https://www.blender.org/lab/mcp-server/) for client-specific configuration. The server talks to Blender over a local TCP socket; keep that listener local.
+Configure the MCP client to run `uvx blender-mcp`, enable **Interface: MCP for Blender**, then start the socket server from the Blender sidebar. The default host is `localhost` and the default port is `9876`. Run only one MCP server instance for a Blender session.
 
-After setup, discover tools and request a blend-file summary before changing the scene.
+MCP for Blender is a third-party project, not a Blender Foundation product. Its current release enables telemetry by default. Disable it in the add-on preferences or set `DISABLE_TELEMETRY=true` in the MCP server environment when that collection is not wanted.
+
+After setup, discover tools. StudioTwin agent workflows require `studiotwin_generate`, `studiotwin_job_status`, `studiotwin_import_asset`, and `studiotwin_import_outputs`. If those verbs are missing, the StudioTwin sidebar remains available but the MCP bridge is not active; stop and report the version mismatch. Do not assume upstream MCP for Blender 1.9.1 is bridge-compatible until StudioTwin publishes a matching add-on build.
 
 ## Unreal Engine
 

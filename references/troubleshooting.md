@@ -6,9 +6,9 @@ First identify the intended host.
 
 For Blender:
 
-1. Confirm Blender 5.1 or newer is running with the MCP add-on enabled.
+1. Confirm Blender 4.2 or newer is running with both StudioTwin and MCP for Blender enabled.
 2. Confirm the add-on's local server is running and the host and port match the MCP server configuration.
-3. Confirm the MCP client launches `blender-mcp` and can list Blender tools.
+3. Confirm the MCP client launches `uvx blender-mcp` and can list Blender tools.
 4. Check Blender's system console and the MCP client's logs for socket or startup errors.
 5. Reconnect after fixing the host-side issue.
 
@@ -25,9 +25,9 @@ Do not invent a server command, port, package path, or tool name.
 
 ## Blender tools appear but StudioTwin tools do not
 
-The Blender MCP connection is working; the StudioTwin surface is not configured or authenticated. Check the connector's StudioTwin configuration and API-key status without pasting the key into chat or logs.
+The socket connection works but the StudioTwin bridge did not register. Confirm the StudioTwin add-on is enabled, inspect Blender's console for the bridge registration message, and compare the installed MCP for Blender version with the StudioTwin release notes.
 
-Do not use arbitrary Blender Python as a substitute for a missing paid StudioTwin generation tool.
+Current MCP for Blender releases can change their internal registration API. Do not use arbitrary Blender Python as a substitute for missing StudioTwin verbs. The sidebar workflow remains available while the bridge issue is fixed.
 
 ## A tool differs from this guide
 

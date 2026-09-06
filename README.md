@@ -20,7 +20,7 @@ git clone https://github.com/realtwin/studiotwin-mcp-skill
 
 ## Connectors
 
-- **Blender is live.** The workflow pairs StudioTwin's cloud generation and asset library with Blender Lab's official Blender MCP v1.0 surface.
+- **Blender is live.** The StudioTwin Blender add-on supports sidebar generation and direct scene import. Agent control uses the third-party MCP for Blender project and must confirm StudioTwin bridge verbs through discovery.
 - **Unreal Engine is live.** StudioTwin toolkits run through Epic's Unreal MCP plugin inside the Editor.
 - **Remote web MCP is not yet sold as a standalone public connector.** It supports connector workflows without duplicating the cloud generation contract.
 
@@ -58,7 +58,7 @@ references/
 
 ## Sources used for Blender GA
 
-The Blender connector guidance tracks Blender Lab's official project at [projects.blender.org/lab/blender_mcp](https://projects.blender.org/lab/blender_mcp). The GA update was checked against upstream `main` at commit `4309a39646e644261624bfcd2bca669b343b7621`, the v1.0.0 release manifest, current installation notes, and the generated tool reference.
+The StudioTwin guidance was checked against the add-on source at commit `86966c2`. The MCP guidance tracks the third-party [MCP for Blender](https://github.com/ahujasid/blender-mcp) project at upstream commit `c5f35d9cc54451d785ac4c00c48bf9e98a2e8db9` and package version 1.9.1. This project is not made by Blender.
 
 ## License
 

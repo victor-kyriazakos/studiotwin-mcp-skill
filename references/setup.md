@@ -8,16 +8,16 @@ See [connectors/blender-mcp.md](connectors/blender-mcp.md) for the architecture 
 
 The shortest working sequence is:
 
-1. Run Blender 5.1 or newer.
-2. Add `https://lab.blender.org/` to Blender's Extensions repositories.
-3. Install and enable the MCP add-on.
-4. Start the add-on's local server or enable auto-start.
-5. Configure the MCP client to launch `blender-mcp`.
-6. Add the StudioTwin connector configuration without placing the `st_` key in chat or source control.
+1. Run Blender 4.2 or newer.
+2. Install and enable the StudioTwin add-on zip.
+3. Enter the StudioTwin API key in the add-on preferences.
+4. Run `uvx blender-mcp install-addon` and enable **Interface: MCP for Blender**.
+5. Configure the MCP client to launch `uvx blender-mcp`.
+6. Start **MCP for Blender** from the 3D View sidebar.
 7. Start the MCP client and list live tools.
-8. Request a blend-file summary before making changes.
+8. Confirm the four `studiotwin_*` bridge verbs before asking the agent to generate or import.
 
-The client talks to `blender-mcp` over stdio. The Python server talks to the add-on over a local TCP socket. Keep that socket local.
+The client talks to `blender-mcp` over stdio. The Python server talks to its Blender add-on over a local TCP socket on `localhost:9876` by default. Keep that socket local.
 
 ## Unreal Engine setup
 
