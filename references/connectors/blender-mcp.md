@@ -103,6 +103,6 @@ Do not report success from the cloud job alone. The Blender scene is the final p
 
 ## Authorities
 
-- Blender MCP project: https://projects.blender.org/lab/blender_mcp
-- Blender MCP documentation: https://www.blender.org/lab/mcp-server/
-- Blender extension repositories: https://docs.blender.org/manual/en/latest/editors/preferences/extensions.html#repositories
+- [Blender MCP project](https://projects.blender.org/lab/blender_mcp)
+- [Blender MCP documentation](https://www.blender.org/lab/mcp-server/)
+- [Blender extension repositories](https://docs.blender.org/manual/en/latest/editors/preferences/extensions.html#repositories)

@@ -47,7 +47,7 @@ See [../setup.md](../setup.md) for installation, server startup, client configur
 
 ## Authorities
 
-- Epic Unreal MCP: https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-mcp-in-unreal-editor
-- StudioTwin installation: https://docs.studiotwin.ai/docs/plugin/installation/
-- StudioTwin toolkits: https://docs.studiotwin.ai/docs/plugin/toolkits/
-- StudioTwin credits: https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work
+- [Epic Unreal MCP](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-mcp-in-unreal-editor)
+- [StudioTwin installation](https://docs.studiotwin.ai/docs/plugin/installation/)
+- [StudioTwin toolkits](https://docs.studiotwin.ai/docs/plugin/toolkits/)
+- [StudioTwin credits](https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work)

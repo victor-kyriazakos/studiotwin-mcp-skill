@@ -4,7 +4,7 @@ StudioTwin charges credits for cloud generation. Local scene inspection, placeme
 
 The figures below came from StudioTwin's published dashboard documentation on 2026-08-14. Models and prices can change. For an MCP call, use the cost reported by the live tool or cost estimator.
 
-Documentation: https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work
+[Credit documentation](https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work)
 
 ## Free monthly credits
 

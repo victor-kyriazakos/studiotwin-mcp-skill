@@ -25,7 +25,7 @@ Open [Get Started](https://app.studiotwin.ai/dashboard/get-started/) or [API Key
 
 The secret starts with `st_`, belongs to the user's organization, and is shown once.
 
-API-key documentation: https://docs.studiotwin.ai/docs/dashboard/pages/api-keys
+[API-key documentation](https://docs.studiotwin.ai/docs/dashboard/pages/api-keys)
 
 ## Connect the key
 
