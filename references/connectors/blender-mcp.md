@@ -1,39 +1,108 @@
-# Connector: Blender MCP
+# Blender connector
 
-**Status: in development, not yet launched.** A StudioTwin Blender addon exists
-(v0.1) but is **TBD / not public** — it launches together with the remote (web)
-MCP. Only the Unreal connector is active today. Do not tell a user the Blender
-connector is available yet.
+**Status: live.** StudioTwin's Blender workflow combines its cloud generation and asset library with Blender Lab's official Blender MCP.
 
-## Architecture (planned)
+## How the pieces fit
 
-Blender does **not** re-implement platform logic. It is a **thin hands** layer on
-the same backend:
+Blender MCP has two processes:
 
-- Generation goes through the **remote (web) MCP** (or REST) — see
-  [web-mcp.md](web-mcp.md). Same `x-api-key` auth, same job/asset lifecycle.
-- A **thin StudioTwin Blender addon** extends the community `blender-mcp`
-  (ahujasid) pattern and adds StudioTwin verbs: `generate_*` plus
-  **`studiotwin_import_asset(assetId)`**, which imports a generated asset into the
-  Blender scene by **asset id** (via the platform's `GET /assets/:uuid`).
-- This reuses the **asset-id interchange contract**: generate once on the platform,
-  then import the same asset by id in Unreal *or* Blender — no duplicate generation.
-- v1 scope: the natural Blender consumers — **materials, meshes, and environment
-  maps**.
+```text
+MCP client <-> MCP over stdio <-> blender-mcp <-> local TCP socket <-> Blender add-on
+```
 
-## For the agent, until it launches
+The Blender add-on runs inside Blender. The `blender-mcp` Python server is launched by the MCP client and relays requests to the add-on.
 
-- Route generation intent to the remote/web connector once that is live; use the
-  Blender addon only for **import-by-asset-id** into the scene.
-- **Discover, do not assume.** If a Blender MCP surface is configured in the host,
-  connect and treat the live tool definitions as authoritative — never guess tool
-  names, schemas, costs, units, or axis/orientation behavior.
-- Blender-specific caveats (units, axis/orientation, import destinations, mutation
-  scope) will be documented here once the addon is public.
+StudioTwin adds the cloud side of the workflow:
 
-The `SKILL.md` operating policy applies unchanged once the connector is live.
+1. Generate or resolve an asset with StudioTwin.
+2. Keep the returned job ID and asset UUID.
+3. Download or import that asset into Blender using the tools exposed by the connected StudioTwin surface.
+4. Use Blender MCP to inspect the imported data, place it, and verify the scene.
 
-## References (internal)
+The asset UUID is the handoff contract. It also works with StudioTwin's Unreal connector, so a team can reuse one generation across both DCCs.
 
-- VPC-800 — StudioTwin verbs for blender-mcp (generate + import-by-asset-id). Done.
-- VPC-796 — parent epic (remote server + in-engine agentic integration).
+## Current Blender MCP baseline
+
+The GA guidance is based on Blender Lab's official Blender MCP v1.0.0 and upstream `main` at commit `4309a39646e644261624bfcd2bca669b343b7621`.
+
+Current requirements and packaging:
+
+- Blender 5.1 or newer;
+- Python 3.10 or newer for the MCP server;
+- the Blender Lab Extensions repository at `https://lab.blender.org/`;
+- the MCP add-on installed and enabled in Blender;
+- the `blender-mcp` server launched by the MCP client;
+- a local TCP connection between the server and Blender.
+
+The official server can also be installed from source:
+
+```bash
+pip install git+https://projects.blender.org/lab/blender_mcp.git#subdirectory=mcp
+```
+
+Use the package or client-specific instructions published at [blender.org/lab/mcp-server](https://www.blender.org/lab/mcp-server/) when available. Do not expose the add-on's local TCP listener beyond the machine.
+
+## What changed for v1.0 and current main
+
+Blender Lab's v1.0 work added or consolidated:
+
+- an MCPB package and corrected MCPB entry point;
+- a Blender 5.1 minimum version in the add-on manifest;
+- safety annotations and tool names;
+- bundled Blender Python API and user-manual documentation;
+- `get_python_api_docs`, `search_api_docs`, and `search_manual_docs`;
+- a server layout under `mcp/` with `blender-mcp` as the entry point;
+- matching v1.0.0 versions for the add-on and server.
+
+Changes after the v1.0 tag updated the generated tool reference, fixed the documented source-install command, refreshed Ruff settings, and corrected screenshot size accounting for the MCP JSON envelope.
+
+## Use purpose-built tools first
+
+The current upstream tool reference exposes 26 tools. They cover:
+
+- scene and blend-file summaries, including missing files and linked libraries;
+- object summaries and collection hierarchy;
+- window and area screenshots;
+- workspace and viewport navigation;
+- thumbnail and viewport renders;
+- Blender Python API and manual search;
+- Python execution in an interactive Blender session;
+- background CLI variants for blend-file inspection and code execution.
+
+Discover the live list at runtime. Prefer a summary, navigation, documentation, or render tool when one fits. Use `execute_blender_code` only when a narrower tool cannot do the job.
+
+## Safe Blender workflow
+
+1. Confirm the intended `.blend` file and whether Blender is in interactive or background mode.
+2. Inspect the scene hierarchy, active object, selection, mode, units, and linked data before editing.
+3. Resolve or generate the StudioTwin asset. For paid work, confirm the live cost before submission.
+4. Import the completed asset once. Capture the actual object, collection, material, image, or world names Blender creates.
+5. Check scale, axis orientation, transforms, materials, image paths, color space, and collection placement.
+6. Render a thumbnail or viewport proof when visual quality matters.
+7. Save only when the user has authorized it, then verify the file path and dirty state.
+
+## Blender details that matter
+
+- Objects and their data blocks are separate. Check whether a data block has multiple users before modifying it.
+- Operators depend on context, mode, active object, and selection. Set these deliberately before calling `bpy.ops`.
+- Blender appends `.001`, `.002`, and similar suffixes on name collisions. Keep direct references instead of guessing the final name.
+- Link objects created through the data API to a collection or they will not appear in the scene.
+- Use `bmesh` for edit-mode mesh changes and flush updates back to the mesh.
+- Update the dependency graph before reading computed transforms or modifier results.
+- Interactive Blender supports deferred responses for long operations. Background mode requires synchronous completion and rejects deferred results.
+
+## StudioTwin asset checks
+
+For environment maps, verify world-node assignment, projection, color space, and viewport or rendered lighting.
+
+For materials, verify each imported texture role, image color space, node links, UV scale, and the target material slots.
+
+For meshes, verify geometry, normals, transforms, dimensions, material links, texture paths, and collection placement.
+
+Do not report success from the cloud job alone. The Blender scene is the final proof.
+
+## Authorities
+
+- Blender MCP project: https://projects.blender.org/lab/blender_mcp
+- Blender MCP documentation: https://www.blender.org/lab/mcp-server/
+- Blender extension repositories: https://docs.blender.org/manual/en/latest/editors/preferences/extensions.html#repositories

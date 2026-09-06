@@ -2,44 +2,63 @@
 
 ## No StudioTwin tools appear
 
-1. Confirm the correct Unreal project is open.
-2. Confirm the StudioTwin plugin is installed, enabled, and compatible with the Editor version.
-3. Confirm the MCP toolset-registry dependency is installed and enabled.
-4. Check the Unreal Output Log for module-load or registration errors.
-5. Confirm the MCP client uses the endpoint and transport from the installed connector release.
-6. Restart the Editor after plugin changes.
-7. Reconnect and repeat live discovery.
+First identify the intended host.
 
-Do not guess missing server commands, ports, or package locations.
+For Blender:
+
+1. Confirm Blender 5.1 or newer is running with the MCP add-on enabled.
+2. Confirm the add-on's local server is running and the host and port match the MCP server configuration.
+3. Confirm the MCP client launches `blender-mcp` and can list Blender tools.
+4. Check Blender's system console and the MCP client's logs for socket or startup errors.
+5. Reconnect after fixing the host-side issue.
+
+For Unreal Engine:
+
+1. Confirm the correct project is open.
+2. Confirm StudioTwin 3.0.0 or newer matches the Editor version.
+3. Confirm StudioTwin and Epic's Unreal MCP plugin are enabled.
+4. Confirm `ModelContextProtocol.StartServer` succeeded and the client uses the same local endpoint.
+5. Check the Unreal Output Log for module-load or registration errors.
+6. Restart the Editor after plugin changes, then reconnect.
+
+Do not invent a server command, port, package path, or tool name.
+
+## Blender tools appear but StudioTwin tools do not
+
+The Blender MCP connection is working; the StudioTwin surface is not configured or authenticated. Check the connector's StudioTwin configuration and API-key status without pasting the key into chat or logs.
+
+Do not use arbitrary Blender Python as a substitute for a missing paid StudioTwin generation tool.
 
 ## A tool differs from this guide
 
-Follow the live tool definition. This skill intentionally contains operating guidance, not duplicated schemas. Plugin versions may add, remove, or change tools and constraints.
+Follow the live definition. Connectors and plugin versions can change names, inputs, costs, and constraints.
 
-## Submission response is ambiguous
+## The submission response is ambiguous
 
-Do not automatically submit again. Preserve the response and transport logs, look for a job or correlation identifier, reconnect if needed, and poll the original job when possible. Ask before making a second paid attempt.
+Keep the response and transport logs. Look for a job or correlation ID, reconnect if needed, and query the original job. Ask before making another paid submission.
 
-## Job remains running
+## A job remains running
 
-Honor the live retry hint or polling interval. Do not treat the interval as a completion estimate. Preserve the identifier and report the current state without promising a finish time.
+Follow the retry hint returned by the service. Preserve the job ID and report its current state without estimating a finish time.
 
-## Job failed
+## A job failed
 
-Capture the identifier, error text, relevant warnings, and sanitized inputs. Check live validation requirements and source accessibility. Correct the specific issue before proposing another paid attempt.
+Capture the job ID, error, warnings, and sanitized inputs. Correct the specific validation, source, authentication, or balance problem before proposing another attempt.
 
-## Job succeeded but assets are missing
+## The job completed but the asset is missing
 
-Treat this as partial success. Inspect returned notes, object paths, expected roles, import destinations, and Unreal logs. Verify whether some assets imported successfully. Do not rerun generation when only the import stage needs diagnosis.
+Treat this as partial success. Resolve the asset ID and verify the download or import stage separately. Retry import rather than generation when the cloud asset is intact.
+
+In Blender, inspect missing external files, collection hierarchy, created data blocks, and material or world links. In Unreal, inspect object paths, `.studiotwin/` sources, and the Output Log.
+
+## Blender changed the wrong object or context
+
+Stop. Record the current mode, active object, selection, collection, and dirty state. Do not undo, delete, save, or overwrite until the recovery scope is clear.
 
 ## Paths are rejected
 
-Determine which reference type the live definition accepts: UE object path, local filesystem path, URI, or another connector-specific reference. Do not substitute a Web/cloud reference for a UE path unless explicitly supported.
+Determine whether the tool expects a Blender file path, Unreal object path, local filesystem path, URI, asset UUID, or another connector-specific reference. These values are not interchangeable.
 
-## Level or sequence changed unexpectedly
+## Cost is unclear
 
-Stop further mutations. Identify created actors or assets and the current dirty state. Do not delete, overwrite, undo, save, or roll back without explicit authorization and an understood recovery path.
-
-## Cost or runtime is unclear
-
-State that it is unknown. Do not import figures from the Web MCP or historical documentation. Use only information exposed by the live UE connector or an authoritative, version-matched policy.
+Use the live estimate or tool description. If neither provides a cost, state that it is unknown and request approval before the paid call.

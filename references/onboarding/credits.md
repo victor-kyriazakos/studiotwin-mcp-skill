@@ -1,49 +1,42 @@
-# Onboarding: credits & the free allocation
+# StudioTwin credits
 
-Credits are StudioTwin's currency for generation jobs. Use this to set user
-expectations during onboarding. **These figures are the published dashboard costs
-as of 2026-08-14 and change over time / vary per model — for a paid MCP call the
-live tool definition is authoritative, not this page.**
+StudioTwin charges credits for cloud generation. Local scene inspection, placement, and verification should not be confused with paid generation.
 
-Docs: https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work
+The figures below came from StudioTwin's published dashboard documentation on 2026-08-14. Models and prices can change. For an MCP call, use the cost reported by the live tool or cost estimator.
 
-## Free monthly allocation
+Documentation: https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work
 
-- New accounts: **50 subscription credits / month** (reset each billing cycle).
-- **Complete your profile → 100 / month, plus 50 added immediately.** Required
-  fields: First name, Last name, Team size, Use case (Company is optional).
-  Account Details → Edit Profile, or the Overview-page prompt.
+## Free monthly credits
+
+New accounts receive 50 subscription credits each billing cycle.
+
+Completing the profile raises the monthly allocation to 100 credits and adds 50 credits immediately. Required fields are first name, last name, team size, and use case. Company is optional.
 
 ## Credit types
 
-| Type          | Behaviour                                                        |
-| ------------- | --------------------------------------------------------------- |
-| Subscription  | Monthly allocation, used first, resets each billing cycle.      |
-| Top-Up        | Purchased separately, used after subscription, never expires.   |
+| Type | Behavior |
+| --- | --- |
+| Subscription | Used first and reset each billing cycle. |
+| Top-up | Purchased separately, used after subscription credits, and does not expire. |
 
-Buy more: **[app.studiotwin.ai/dashboard/buy-credits](https://app.studiotwin.ai/dashboard/buy-credits)**
-(or Buy Credits / Top Up in the dashboard). Top-Up credits are added immediately.
+Credits can be purchased at [app.studiotwin.ai/dashboard/buy-credits](https://app.studiotwin.ai/dashboard/buy-credits).
 
-## Indicative costs per toolkit (verify live)
+## Published reference costs
 
-| Toolkit / tool                         | Model(s)                              | Credits (approx.) |
-| -------------------------------------- | ------------------------------------- | ----------------- |
-| Motion — Text to Motion                | HY Motion 1.0 (Tencent) / Kimodo (NVIDIA) | 5 per action  |
-| Motion — Edit / Stitch / Trajectory    | Kimodo (NVIDIA)                       | 5 each            |
-| Environment — Text to Env Map          | FLUX.1-schnell (Black Forest Labs)    | 20                |
-| Environment — Image to Env Map         | FLUX.1-schnell (Black Forest Labs)    | 25                |
-| Environment — Env Map to World         | HY World 1.0 (Tencent)                | 80                |
-| Mesh — Image to 3D Mesh                | Hunyuan 3D V2.1 / Tripo3D P1 / V3     | 25 / 75 / 45      |
-| Material — Texture to Material         | Patina (FAL)                          | 20                |
-| Material — Text / Image to Material    | Patina (FAL)                          | resolution formula¹ |
-| Audio — Text to Sound Effect           | ElevenLabs                            | duration formula² |
+| Toolkit or operation | Model | Approximate credits |
+| --- | --- | ---: |
+| Text to Motion | HY Motion 1.0 or NVIDIA Kimodo | 5 per action |
+| Motion edit, stitch, or trajectory | NVIDIA Kimodo | 5 each |
+| Text to environment map | FLUX.1-schnell | 20 |
+| Image to environment map | FLUX.1-schnell | 25 |
+| Environment map to world | Tencent HY World 1.0 | 80 |
+| Image to 3D mesh | Hunyuan 3D V2.1, Tripo3D P1, or Tripo3D V3 | 25, 75, or 45 |
+| Texture to material | FAL Patina | 20 |
+| Text or image to material | FAL Patina | Resolution-based formula |
+| Text to sound effect | ElevenLabs | Duration-based formula |
 
-¹ Material (text/image) scales with resolution + upscale factor; Text-to-Material
-`round(2 + 10·MP + 3·MP·upscale)`, Image-to-Material `round(13 + 10·MP + 3·MP·upscale)`
-(upscale term ignored at 1x; 1 MP = 1024×1024).
-² Sound effect `round(max(seconds, 5) · 0.6)`; auto-duration reserves 18 credits
-(30 s max) upfront and refunds the unused remainder after generation.
+For text-to-material, the published formula is `round(2 + 10 * MP + 3 * MP * upscale)`. For image-to-material, it is `round(13 + 10 * MP + 3 * MP * upscale)`. The upscale term is ignored at 1x; 1 MP is 1024 by 1024.
 
-When quoting a cost to a user before a paid call, prefer the number the **live
-tool definition** returns; fall back to these figures only as a rough estimate and
-say so.
+For sound effects, the published formula is `round(max(seconds, 5) * 0.6)`. Automatic duration reserves 18 credits for the 30-second maximum and refunds the unused balance after generation.
+
+Use these figures for rough onboarding estimates only. Quote the live connector before a paid call.

@@ -1,56 +1,65 @@
-# studiotwin-mcp-skill
+# StudioTwin MCP skill
 
-An [AgentSkill](https://modelcontextprotocol.io) for operating **StudioTwin's**
-cloud asset-generation platform through MCP — animation, environments, meshes,
-materials, and audio for virtual production.
+An [Agent Skill](https://modelcontextprotocol.io) for generating production assets with StudioTwin and using them in Unreal Engine, Blender, and web pipelines.
 
-The skill is deliberately **operating guidance, not a tool catalog**: live MCP
-tool definitions are always the authority for names, schemas, costs, and limits.
-It never hardcodes or guesses them.
+The skill focuses on operating judgment rather than copying MCP schemas into documentation. Connected servers provide the current tool names, inputs, outputs, limits, and costs.
+
+## Install
+
+Download the entry file:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realtwin/studiotwin-mcp-skill/main/SKILL.md -o SKILL.md
+```
+
+Clone the full skill when you need its setup and troubleshooting references:
+
+```bash
+git clone https://github.com/realtwin/studiotwin-mcp-skill
+```
 
 ## Connectors
 
-- **Unreal Engine** — live, primary. StudioTwin UE plugin via Epic's Unreal MCP
-  plugin, served locally inside the Editor.
-- **Remote (web)** — built, not yet public. Host-agnostic, editor-free access to
-  the same cloud backend (`POST /mcp`, `x-api-key`); launches with Blender.
-- **Blender** — in development, not yet launched. Thin addon over the remote MCP
-  that imports StudioTwin assets by id.
+- **Blender is live.** The workflow pairs StudioTwin's cloud generation and asset library with Blender Lab's official Blender MCP v1.0 surface.
+- **Unreal Engine is live.** StudioTwin toolkits run through Epic's Unreal MCP plugin inside the Editor.
+- **Remote web MCP is not yet sold as a standalone public connector.** It supports connector workflows without duplicating the cloud generation contract.
 
-## Layout
+A generation creates a reusable asset ID. The same asset can move into Blender, Unreal Engine, or a web runtime without paying for the generation again.
 
-```
-SKILL.md                          # entry: connectors, onboarding, operating policy
+## What the skill covers
+
+- choosing the correct connector from live discovery;
+- onboarding and API-key hygiene;
+- credit-aware generation and job polling;
+- asset resolution and cross-host transfer;
+- Blender scene inspection, import, placement, and render verification;
+- Unreal asset import, level placement, animation, and sequence work;
+- failure recovery without duplicate paid jobs.
+
+## Repository layout
+
+```text
+SKILL.md
 references/
-  connectors/ue-mcp.md            # the live UE MCP surface
-  connectors/web-mcp.md           # remote /mcp — built, not yet public
-  connectors/blender-mcp.md       # thin addon over remote MCP — in development
-  onboarding/register.md          # account + API key (st_…)
-  onboarding/plugins.md           # download/install the right plugin
-  onboarding/credits.md           # credits, free allocation, cost expectations
-  setup.md                        # UE install / MCP server / client config / first run
-  capabilities.md                 # map intent → capability family
-  operations.md                   # async jobs, imports, Editor mutations
-  content-guidance.md             # prompting & source preparation
-  troubleshooting.md              # failure diagnosis & recovery
+  connectors/
+    blender-mcp.md
+    ue-mcp.md
+    web-mcp.md
+  onboarding/
+    register.md
+    plugins.md
+    credits.md
+  setup.md
+  capabilities.md
+  operations.md
+  content-guidance.md
+  troubleshooting.md
 ```
 
-## Onboarding via the skill
+## Sources used for Blender GA
 
-Users can enter the StudioTwin customer journey through this skill: it walks them
-to [app.studiotwin.ai](https://app.studiotwin.ai) to register, create an API key,
-install the plugin for their host, and run a first generation.
-
-## Status
-
-UE connector + onboarding are populated from StudioTwin's docs and are usable
-today. The remote (web) and Blender connectors are documented from the platform's
-internal design but are not yet public — they launch together.
+The Blender connector guidance tracks Blender Lab's official project at [projects.blender.org/lab/blender_mcp](https://projects.blender.org/lab/blender_mcp). The GA update was checked against upstream `main` at commit `4309a39646e644261624bfcd2bca669b343b7621`, the v1.0.0 release manifest, current installation notes, and the generated tool reference.
 
 ## License
 
 [MIT](./LICENSE) © 2026 RealTwin Solutions Inc.
-
----
-
-_StudioTwin is a product of RealTwin Solutions Inc._

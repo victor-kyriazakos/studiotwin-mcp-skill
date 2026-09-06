@@ -1,104 +1,96 @@
-# StudioTwin UE MCP setup
+# Set up StudioTwin MCP
 
-Use this reference when onboarding a user or when MCP discovery fails. Keep setup user-led: the agent explains the steps, attempts connection and discovery, and reports what remains unresolved.
+Use this guide when onboarding a user or when discovery fails. The operator handles installation and secrets; the agent connects, discovers tools, and verifies only what the host reports.
 
-## What is required
+## Blender setup
 
-1. **A compatible Unreal Editor project.**
-2. **The StudioTwin UE plugin, version `3.0.0` or newer** — the MCP surface exists
-   only in `3.0.0+`. Older builds (e.g. `2.6.1`) expose the Editor toolkits but no
-   MCP tools.
-3. **The Unreal MCP plugin** (`ModelContextProtocol`), plus the **optional All Toolsets plugin** when the user also wants Unreal's default toolsets. Unreal MCP enables the Toolset Registry dependency automatically.
-4. **An MCP client configuration** generated for the user's agent or client.
+See [connectors/blender-mcp.md](connectors/blender-mcp.md) for the architecture and [onboarding/plugins.md](onboarding/plugins.md) for installation.
 
-Use Epic's [Unreal MCP documentation](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-mcp-in-unreal-editor#optional:one-shotusingtheterminalplugin) as the authority for Unreal MCP setup and client configuration.
+The shortest working sequence is:
 
-## 1. Install StudioTwin — User
+1. Run Blender 5.1 or newer.
+2. Add `https://lab.blender.org/` to Blender's Extensions repositories.
+3. Install and enable the MCP add-on.
+4. Start the add-on's local server or enable auto-start.
+5. Configure the MCP client to launch `blender-mcp`.
+6. Add the StudioTwin connector configuration without placing the `st_` key in chat or source control.
+7. Start the MCP client and list live tools.
+8. Request a blend-file summary before making changes.
 
-If StudioTwin is not installed, direct the user to either:
+The client talks to `blender-mcp` over stdio. The Python server talks to the add-on over a local TCP socket. Keep that socket local.
 
-- [StudioTwin plugin installation guide](https://docs.studiotwin.ai/docs/plugin/installation/) for detailed instructions and version guidance.
-- [StudioTwin on Fab](https://www.fab.com/listings/db820954-ce06-47de-bdc0-054b669c1727) to obtain the plugin through Fab and the Epic Games Launcher.
+## Unreal Engine setup
 
-The StudioTwin build must match the exact Unreal Engine version used by the project, **and be version `3.0.0` or newer for MCP**. After installation, ask the user to open **Edit → Plugins**, search **StudioTwin**, and confirm the version on the card is `3.0.0+` — if it is older (e.g. `2.6.1`), the user must update from Fab or the manual build before MCP will work (see [onboarding/plugins.md](onboarding/plugins.md)). Then enable **StudioTwin** and restart Unreal Editor when prompted.
+### Requirements
 
-## 2. Create an account and configure the API key — User
+- a project on Unreal Engine 5.6, 5.7, or 5.8;
+- the matching StudioTwin build, version 3.0.0 or newer;
+- Epic's Unreal MCP plugin (`ModelContextProtocol`);
+- an MCP client configuration generated from the intended project;
+- a StudioTwin account and API key.
 
-If the user does not have a StudioTwin account or API key, direct them to [StudioTwin Get Started](https://app.studiotwin.ai/dashboard/get-started/).
+### Install StudioTwin
 
-After signing up and creating an API key:
+Use the [StudioTwin installation guide](https://docs.studiotwin.ai/docs/plugin/installation/) or [StudioTwin on Fab](https://www.fab.com/listings/db820954-ce06-47de-bdc0-054b669c1727).
 
-1. Open **Edit → Project Settings** in Unreal Editor.
-2. Under **Plugins**, select **StudioTwin**.
-3. Paste the key into the **API Key** field.
-4. Leave **API Endpoint URL** empty unless StudioTwin support or deployment documentation specifies otherwise.
-5. Confirm Unreal accepts the key.
+The build must match the project's Unreal version. Under **Edit > Plugins**, confirm StudioTwin is version 3.0.0 or newer, enable it, and restart the Editor.
 
-The agent must not ask the user to paste the API key into chat, logs, source control, or the skill. If validation fails, ask the user to check whitespace, key status, organization, and endpoint settings using the [StudioTwin installation guide](https://docs.studiotwin.ai/docs/plugin/installation/).
+### Configure the StudioTwin key
 
-## 3. Enable Unreal MCP — User
+If the user needs an account or key, send them to [StudioTwin Get Started](https://app.studiotwin.ai/dashboard/get-started/).
 
-1. Open **Edit → Plugins**.
-2. Search for **Unreal MCP** and enable it.
-3. Optionally enable **All Toolsets** to expose Unreal's default toolsets in addition to StudioTwin's toolsets.
-4. Restart Unreal Editor when prompted.
+In Unreal Editor:
 
-The plugin identifier and console-command prefix are `ModelContextProtocol`. The Toolset Registry is a dependency of Unreal MCP and is enabled automatically.
+1. Open **Edit > Project Settings > Plugins > StudioTwin**.
+2. Paste the API key into **API Key**.
+3. Leave **API Endpoint URL** empty unless StudioTwin supplied a deployment-specific value.
+4. Confirm Unreal accepts the key.
 
-## 4. Start the MCP server — User
+Never ask the user to paste the key into chat, logs, or repository files.
 
-Open the Unreal Editor console and run:
+### Enable Unreal MCP
 
-```
+1. Open **Edit > Plugins**.
+2. Enable **Unreal MCP**.
+3. Enable **All Toolsets** only when the user also wants Unreal's default toolsets.
+4. Restart Unreal Editor.
+
+The Toolset Registry dependency is enabled automatically.
+
+### Start the local server
+
+Open the Unreal console and run:
+
+```text
 ModelContextProtocol.StartServer
 ```
 
-To specify a port explicitly:
+To select the port explicitly:
 
-```
+```text
 ModelContextProtocol.StartServer 8000
 ```
 
-The documented default endpoint is `http://127.0.0.1:8000/mcp`. This is a local connection without an authentication layer; do not expose it for remote access.
+The documented default endpoint is `http://127.0.0.1:8000/mcp`. Do not expose it remotely.
 
-The user may configure automatic server startup later through **Editor Preferences → General → Model Context Protocol → Auto Start Server**. The console command is the simplest first-run path.
+### Generate client configuration
 
-## 5. Generate the MCP client configuration — User
+From the Unreal console, generate the configuration for the user's client:
 
-From the Unreal Editor console, generate the configuration for the user's client:
-
-```
+```text
 ModelContextProtocol.GenerateClientConfig Codex
 ```
 
-Epic documents these client values: `ClaudeCode`, `Cursor`, `VSCode`, `Gemini`, `Codex`, and `All`. Use `All` when several clients need configuration:
+Epic documents `ClaudeCode`, `Cursor`, `VSCode`, `Gemini`, `Codex`, and `All`. Use `All` only when several clients need configuration.
 
-```
-ModelContextProtocol.GenerateClientConfig All
-```
+The command writes into the project or workspace root. JSON configurations are merged. Epic documents the Codex TOML path as write-once, so inspect an existing stale entry before regenerating it.
 
-The command writes the appropriate configuration in the project or workspace root. JSON configurations are merged with existing entries. Epic documents the Codex TOML configuration as write-once, so an existing stale entry may require user review before regeneration.
+## Connect and discover
 
-## 6. Connect and discover — Shared
+1. The operator opens the intended Blender file or Unreal project and starts the local connector.
+2. The agent starts from the directory containing the client configuration.
+3. The agent connects and lists live tools.
+4. The agent confirms StudioTwin capabilities and reads their current definitions.
+5. Work begins only after the host, target, cost boundary, and allowed mutations are clear.
 
-1. **User:** Start the agent or MCP client from the project or workspace root where Unreal generated the configuration.
-2. **Agent:** Attempt to connect and list the live MCP tools.
-3. **Agent:** Confirm the StudioTwin capability groups are present.
-4. **Agent:** Use the live tool definitions as the authority for names, schemas, costs, and behavior.
-
-If connection or discovery fails, the agent must report the failure and guide the user through these checks:
-
-- Unreal Editor and the intended project are open.
-- The MCP server was started successfully.
-- StudioTwin and Unreal MCP are enabled.
-- The client was launched from the root containing the generated configuration.
-- The generated endpoint matches the Unreal MCP server.
-- The StudioTwin API key is valid.
-
-Retry discovery only after the user confirms the relevant host-side correction.
-
-## Responsibility summary
-
-- **User:** installs plugins, signs up, configures the API key, enables plugins, runs Unreal console setup commands, and launches the client from the correct root.
-- **Agent:** attempts connection, discovers tools, inspects live definitions, and reports success or failure.
-- **Agent guides user:** provides the appropriate documentation link and precise corrective steps; it never claims that a user-owned Unreal setup action was completed.
+If discovery fails, use [troubleshooting.md](troubleshooting.md).

@@ -1,88 +1,52 @@
-# Connector: Remote (Web) MCP
+# Remote web connector
 
-**Status: built, not yet public.** The remote MCP server exists (StudioTwin API,
-VPC-797) but is in **internal review** and launches **alongside the Blender
-connector** — it is *not live for end users today*. Only the Unreal connector is
-active right now. Do not tell a user the remote connector is available yet, and do
-not advertise a production endpoint until StudioTwin announces it. The contract
-below is documented so the skill is ready to flip on at launch.
+**Status: available to approved connector deployments, not yet marketed as a standalone public connector.** Do not advertise a production endpoint until StudioTwin publishes one.
 
-## What it is
+## Purpose
 
-A **host-agnostic**, editor-free MCP surface into the same StudioTwin cloud
-backend, served directly by the StudioTwin API. Use it from any MCP client (agent,
-pipeline, or a DCC without a dedicated connector). Because there is no editor, the
-server returns **presigned URLs and asset references** rather than importing into
-a scene; downstream, an in-engine connector (UE / Blender) can **import by asset
-id**.
+The remote MCP exposes StudioTwin's cloud generation and asset library without requiring an open editor. It serves agents, pipelines, and DCC connectors that handle scene work separately.
 
-## Transport & auth
+A remote generation returns a job ID. Completed jobs expose asset references and temporary download URLs. Blender or Unreal can then import the asset by UUID.
 
-- **Streamable HTTP, stateless, tools-only.** One JSON-RPC message per `POST /mcp`;
-  responses are plain JSON. `GET`/`DELETE` return `405` (no SSE stream, no
-  sessions). Protocol version `2025-06-18` (older `2025-03-26` array batching is
-  tolerated).
-- **Auth: `x-api-key` header** carrying a StudioTwin API key — the same `st_` keys
-  as `/jobs`; **organization keys are allowed**. Per-key rate limiting applies.
-  Provide the key via the MCP client's server config/env — never in chat, logs, or
-  tool arguments.
-- On `initialize`, the server returns `serverInfo.name = "studiotwin"` and an
-  `instructions` field with inline usage guidance, so any client gets baseline
-  direction even without this skill.
+## Transport and authentication
 
-## Tools
+The current deployment contract uses:
 
-**Generation tools are auto-derived from the platform's VPFunction registry** —
-one MCP tool per public function, with the **credit cost surfaced in the tool
-description**. This is exactly why the skill never hardcodes tool names or costs:
-discover them live via `tools/list`. Generation tools return a **job uuid
-immediately** (asynchronous).
+- Streamable HTTP at `POST /mcp`;
+- one JSON-RPC message per request;
+- stateless, tools-only behavior;
+- an `x-api-key` header containing a StudioTwin `st_` key;
+- per-key rate limits;
+- StudioTwin server information and usage instructions during initialization.
 
-Fixed **platform tools** (stable names) wrap the job/asset/wallet lifecycle:
+Keep the API key in the MCP client's secret configuration. Never place it in chat, logs, tool arguments, or repository files.
 
-| Tool                              | Purpose                                                        |
-| --------------------------------- | ------------------------------------------------------------- |
-| `studiotwin_estimate_cost`        | Estimate a generation's credit cost + whether the balance covers it. Use before expensive gens. |
-| `studiotwin_get_credit_balance`   | Current wallet balance.                                        |
-| `studiotwin_get_job_status`       | Poll a job; outputs include presigned download URLs + asset references. |
-| `studiotwin_list_my_jobs`         | Browse your jobs.                                              |
-| `studiotwin_cancel_job`           | Cancel a queued/submitted job you own (refunds reserved credits). |
-| `studiotwin_list_my_assets`       | Browse your asset library.                                    |
-| `studiotwin_resolve_asset`        | Resolve an owned asset uuid → metadata + presigned download URL. |
-| `studiotwin_upload_asset`         | Create a presigned S3 upload session.                         |
-| `studiotwin_complete_asset_upload`| Finalize an upload into the asset library.                    |
+## Tool discovery
 
-Discover the live set at runtime; the table above is orientation, not a schema.
+Generation tools come from StudioTwin's public function registry. Their names, schemas, and credit costs can change with the platform, so discover them through `tools/list`.
 
-## Workflow (from the server's own instructions)
+The platform surface also covers:
 
-1. Optionally call `studiotwin_estimate_cost` and/or `studiotwin_get_credit_balance`.
-2. Call a generation tool → receive a **job uuid** immediately.
-3. Poll `studiotwin_get_job_status` until `COMPLETE` (submit once; do not re-fire).
-4. Either **download** outputs via the returned presigned URLs, **or** pass the
-   **asset id** to an in-engine StudioTwin integration (UE / Blender toolsets) to
-   **import by asset id** — the cross-connector interchange contract.
-5. Uploads: `studiotwin_upload_asset` → PUT to S3 → `studiotwin_complete_asset_upload`.
+- credit estimates and wallet balance;
+- job status, history, and cancellation;
+- asset listing and resolution;
+- asset upload and upload completion.
 
-## Errors & credits
+Use the live names and schemas. This document describes the workflow rather than freezing the catalog.
 
-- **Code `40001` = wallet balance too low.** Surface it plainly, suggest
-  `studiotwin_estimate_cost` / `studiotwin_get_credit_balance`, and route to
-  [../onboarding/credits.md](../onboarding/credits.md) for topping up.
-- Everything in the `SKILL.md` operating policy still holds: plan from intent,
-  inspect the live definition, submit-once/poll, disclose costs, verify returned
-  artifacts, never expose the API key or presigned URLs.
+## Workflow
 
-## Consumers
+1. Estimate the generation cost and check the wallet when useful.
+2. Submit one generation and record the job UUID.
+3. Poll that job until completion.
+4. Resolve the asset UUID.
+5. Download the result or import it through Blender or Unreal.
+6. For uploads, create the upload session, transfer the file to the returned destination, then complete the upload.
 
-Remote-MCP outputs feed editor-free pipelines too — e.g. StudioTwin assets into
-three.js / React-Three-Fiber (HDR env map as lighting, PBR maps into materials,
-GLB meshes). That 3D-web composition is its own skill (tracked separately); this
-connector is the generation source.
+A low-balance response means the user needs more credits. Report it directly and link to [credits.md](../onboarding/credits.md).
 
-## References (internal)
+## Web pipelines
 
-- VPC-797 — Remote MCP MVP (`/mcp` Streamable HTTP, registry-derived tools). Done.
-- VPC-799 — OAuth 2.1 + PKCE for public connector distribution. Planned (the
-  `x-api-key` header is the MVP auth; OAuth is the later public-distribution path).
-- VPC-796 — parent epic (remote server + in-engine agentic integration).
+A web application can use the same resolved assets. Common consumers include HDR environments, PBR texture sets, and GLB meshes in three.js or React Three Fiber.
+
+The connector generates and resolves assets. Scene composition, optimization, and publishing remain separate steps.

@@ -1,79 +1,48 @@
-# Onboarding: account & API key
+# Create a StudioTwin account and API key
 
-Use this when a user reaches StudioTwin **through the skill** without an account
-or API key yet. Guide them; never ask them to paste the key into chat, logs, or
-source control. The user performs these steps — the agent explains and verifies
-only what the connector reports.
+Use this when a user reaches StudioTwin without an account or key. The operator creates and stores the secret. The agent explains the steps and verifies only what the connector reports.
 
-## First, place your operator
+## Establish the host
 
-If the live tools didn't tell you where you are, work it out *with* the operator
-before anything else — a short, natural exchange, not an interrogation. You're
-trying to learn three things:
+Ask where the user is working: Blender, Unreal Engine, or a web pipeline. Then establish whether they already have a StudioTwin account and an active `st_` API key.
 
-- **Where they're working** — Unreal Engine, Blender, or somewhere else / nothing
-  set up yet. This decides which connector you hand off to.
-- **Whether they already have a StudioTwin account and an `st_` API key.** If not,
-  start at step 1 below.
-- **For Unreal:** is the StudioTwin plugin installed and enabled, and what version?
-  MCP needs `3.0.0`+ (older builds are toolkit-only, no MCP — see [plugins.md](plugins.md)).
-  Is the Unreal MCP server running? (see [../setup.md](../setup.md))
+For Blender, also check whether Blender MCP is connected. For Unreal, check the StudioTwin plugin version and whether Unreal MCP is running.
 
-Their answers tell you which steps they still need and which connector fits. Ask
-plainly, one thing at a time, and verify only what the connector actually reports
-back — take nothing on faith.
+Keep the exchange short. Ask only for information needed to choose the next setup step.
 
-## 1. Create an account
+## Create the account
 
-Go to **[app.studiotwin.ai](https://app.studiotwin.ai)** and either:
+Open [app.studiotwin.ai](https://app.studiotwin.ai) and sign in with Google or continue with an email address. There is no application or waiting list.
 
-- **Sign in with Google**, or
-- enter an **email address** and click **Continue**.
+## Create an API key
 
-No application form, no waiting list.
+Open [Get Started](https://app.studiotwin.ai/dashboard/get-started/) or [API Keys](https://app.studiotwin.ai/dashboard/api-keys):
 
-## 2. Create an API key
+1. Select **Create key**.
+2. Name the key for its machine or project. Separate keys make suspension less disruptive.
+3. Add an optional description.
+4. Create the key and copy it immediately.
 
-From the dashboard **[Get Started](https://app.studiotwin.ai/dashboard/get-started/)**
-page (also reachable from the sidebar and the Overview banner), or the
-**[API Keys](https://app.studiotwin.ai/dashboard/api-keys)** page:
+The secret starts with `st_`, belongs to the user's organization, and is shown once.
 
-1. Click **+ Create key**.
-2. Give it a **Name** (e.g. the machine or project — one key per machine/project
-   is recommended so a single key can be suspended without disrupting others).
-3. Optionally add a description, then **+ Create key**.
-4. **Copy the secret immediately — it is shown only once and cannot be retrieved
-   again.** Keys begin with `st_` and belong to your organization.
+API-key documentation: https://docs.studiotwin.ai/docs/dashboard/pages/api-keys
 
-Docs: https://docs.studiotwin.ai/docs/dashboard/pages/api-keys
+## Connect the key
 
-## 3. Connect the key to the connector
+For Unreal Engine, open **Edit > Project Settings > Plugins > StudioTwin**, paste the key into **API Key**, and leave **API Endpoint URL** empty unless StudioTwin provided another value.
 
-- **Unreal Engine:** install the plugin (see [plugins.md](plugins.md)), then
-  **Edit → Project Settings → Plugins → StudioTwin**, paste the key into **Api
-  Key**, and leave **Api Endpoint Url** empty. The key is validated there, so a
-  mistyped/inactive key is flagged immediately. Watch for a trailing space from
-  copying.
-- **Web / other MCP connectors:** provide the `st_` key via the MCP server's
-  env/config, never inline. (See [../connectors/web-mcp.md](../connectors/web-mcp.md);
-  transport still to be confirmed.)
+For Blender or an approved remote client, store the key in the connector's secret configuration. Do not paste it into chat, prompts, logs, or source control.
 
-## 4. Verify
+## Verify
 
-- **UE:** open the **Tools** menu — a **STUDIOTWIN** section should list the
-  toolkits (Audio, Environment, Material, Mesh, Motion). If it is missing, the
-  plugin is likely installed but not enabled (Edit → Plugins → enable → Restart).
-- A quick end-to-end check: **Tools → Motion Toolkit → Text to Motion** with a
-  short prompt (e.g. "A person is walking forward hastily"). It needs nothing in
-  the project (the plugin ships its own skeletal mesh) and confirms the full cloud
-  round-trip. It costs credits (see [credits.md](credits.md)).
+For Blender, list the live Blender and StudioTwin tools, then request a read-only scene summary. A paid generation is not required to prove the Blender MCP link.
 
-If a key is rejected: check for whitespace, confirm the key is **Active** (not
-suspended) on the API Keys page, confirm it belongs to the expected organization,
-and confirm the endpoint field is empty.
+For Unreal, open **Tools** and confirm the StudioTwin toolkits are present. An optional end-to-end cloud test can use **Motion Toolkit > Text to Motion**, but it consumes credits and requires approval.
 
-## Key hygiene (tell the user)
+If the key is rejected, check for copied whitespace, confirm that it is active, confirm the organization, and verify the endpoint setting.
 
-- Never commit keys to public repos, shared docs, or logs.
-- One key per machine/project; suspend or delete a leaked key from the API Keys
-  page (suspend is reversible; delete is permanent).
+## Key hygiene
+
+- Use a separate key per machine or project.
+- Store keys in secret configuration, not repositories or documents.
+- Suspend a leaked key immediately. Suspension is reversible; deletion is permanent.

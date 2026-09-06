@@ -1,60 +1,71 @@
-# Jobs, imports, and Editor mutations
+# Jobs, imports, and editor changes
 
-## Asynchronous generation
+## Run asynchronous generation safely
 
-Most StudioTwin generation workflows are asynchronous.
+1. Read the live submission schema.
+2. Confirm inputs, cost, and authorization.
+3. Submit once.
+4. Record the job ID exactly.
+5. Poll the existing job at the interval returned by the service.
+6. Inspect warnings, outputs, and asset metadata when it completes.
+7. Keep the job ID and error text when it fails.
 
-1. Inspect the live submission definition.
-2. Confirm inputs and authorization.
-3. Submit exactly once.
-4. Capture the job identifier verbatim.
-5. Poll the existing job at the interval recommended by the live response or definition.
-6. While running, wait rather than resubmit.
-7. On success, inspect warnings, notes, and imported-artifact metadata.
-8. On failure, preserve the error and job identifier for diagnosis.
+A timeout or disconnect does not prove that the service rejected the submission. Recover the original job before considering another paid call.
 
-A timeout, disconnect, or malformed transport response does not prove that submission failed. Attempt to recover the original identifier or inspect status before considering another paid call.
+A polling interval is not a completion estimate. Do not promise a runtime unless the live service provides one.
 
-Do not promise a runtime unless the live tool or service supplies one. A polling interval is not an estimated completion time.
+## Import by asset ID
 
-## Imported content
+A completed job can produce an asset UUID and one or more files. Prefer the asset UUID as the durable handoff between connectors.
 
-Generation may both produce remote content and import it into Unreal. StudioTwin downloads generated source files—such as images, GLB files, and other intermediate deliverables—to `<ProjectRoot>/.studiotwin/` before or during import.
+Before importing:
 
-After completion, verify:
+- confirm the target Blender file or Unreal project;
+- confirm the destination collection, folder, or content path;
+- resolve the current asset metadata;
+- check file type, expected roles, scale, and orientation;
+- distinguish import from placement and saving.
 
-- expected UE object paths exist;
-- asset classes and roles match the request;
-- required source files resolved;
-- materials, textures, animation, or related assets are present;
-- warnings or missing roles are disclosed;
-- destination and naming are acceptable.
+If generation succeeded but import failed, retry the import with the same asset. Do not rerun generation unless the source asset itself is unusable.
 
-An import can be partially successful. Do not hide missing components behind a general success status.
+## Verify Blender imports
 
-If generation succeeds but Unreal import fails, check `<ProjectRoot>/.studiotwin/` for the source file associated with the job. When the source is complete and matches the job, retry only the import stage instead of rerunning paid generation. Do not import unrelated or stale files.
+Capture the actual names created by Blender. Check:
 
-## StudioTwin changes to the Unreal project
+- object and data-block types;
+- collection placement;
+- transforms, dimensions, normals, and axis orientation;
+- material slots and node links;
+- texture paths and image color spaces;
+- world-node assignment for environment maps;
+- missing external files;
+- the final viewport or rendered appearance.
 
-Some StudioTwin workflows do more than generate remote content: they import assets, place generated world content, load animation, or create sequences in the open Unreal project.
+Blender may suffix names on collision. Keep direct references instead of reconstructing names later.
 
-Before using one of these StudioTwin capabilities, identify the intended destination and confirm that the requested project or level change is in scope. Afterward, verify the created asset, actor, animation, or sequence.
+Saving is a separate mutation. Confirm the destination path and permission before saving, then verify the file path and dirty state.
 
-This guidance applies to changes made by StudioTwin workflows. General Unreal editing through optional UE toolsets is outside this skill.
+## Verify Unreal imports
 
-## Motion-specific preparation
+StudioTwin may download source files into `<ProjectRoot>/.studiotwin/` before import. After completion, check:
 
-Validate required frame rate, frame count or span, trajectory ranges, skeleton compatibility, and retargeting inputs against the live definition. A known workflow may require 30 fps, but the live definition and runtime validation remain authoritative.
+- Unreal object paths and asset classes;
+- expected materials, textures, meshes, sounds, or animations;
+- missing roles and unresolved source files;
+- actors, sequences, or animation changes in the active level;
+- destination naming and path.
 
-## Provenance record
+An import can be partly successful. Report missing pieces instead of reducing the result to a single success state.
 
-Keep a concise execution record containing:
+## Keep a provenance record
 
-- discovered operation used;
-- job identifier;
-- source UE paths, local paths, or URIs;
-- output UE object paths and roles;
-- mutations made;
-- warnings, partial results, and verification status.
+Record:
 
-Exclude credentials and transient signed material.
+- connector and operation;
+- job ID and asset ID;
+- source paths or media references;
+- imported object names or Unreal object paths;
+- scene or project mutations;
+- warnings and verification status.
+
+Exclude credentials, API keys, and signed download URLs.

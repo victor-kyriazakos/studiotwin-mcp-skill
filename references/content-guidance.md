@@ -1,45 +1,47 @@
-# Prompting and source preparation
+# Prepare prompts and source media
 
-Use this guide for creative briefs and input preparation. Always defer accepted fields and formats to the live tool definition.
+Use the live tool schema for accepted fields and file formats. Keep the user's language where it already controls the result.
 
-## Build a useful brief
+## Write the brief
 
-Preserve the user's intent and add only details that materially control the result:
+Include details that change the output:
 
 - subject or action;
-- environment, mood, and style;
+- setting and lighting;
 - composition or spatial intent;
-- duration or temporal behavior;
-- technical constraints required by the destination;
-- elements to preserve;
-- elements to avoid.
+- duration and timing;
+- destination constraints;
+- details to preserve;
+- details to avoid.
 
-Do not silently turn optional creative choices into requirements. When a key ambiguity affects cost or requires multiple generations, ask before submitting.
+Do not turn optional choices into requirements. Ask before submitting when an ambiguity would change cost or require extra generations.
 
 ## Environments
 
-Clarify visual setting, time of day, lighting, weather, horizon and ground behavior, spatial scale, and whether the result must support a specific world-building stage. For image-conditioned work, identify what should be preserved versus expanded or transformed.
+Describe the place, time of day, light sources, weather, horizon, ground, and scale. Include what should exist behind the camera because an environment map covers the full sphere.
 
-Verify the environment result before deriving world geometry or placing it in a level.
+For image-conditioned work, say what must remain and what may be expanded. Verify the environment before deriving world geometry or assigning it to a scene.
 
 ## Materials
 
-Identify surface type, age or wear, scale, finish, and the source image or texture role. Check whether the workflow expects a single source, a texture set, or a textual brief. After import, verify the actual map roles and material assets.
+Describe the surface, age, wear, finish, physical scale, and tiling needs. Identify the role of each source image or texture.
+
+After import, inspect the maps actually returned. Normal, roughness, displacement, and color maps need different color-space treatment in the DCC.
 
 ## Meshes
 
-Choose a source image with a clear subject and useful silhouette. State what geometry matters, expected orientation and scale, and whether materials or textures are required. Inspect the imported mesh in Unreal before using it downstream.
+Use an image with one clear subject and a readable silhouette. State the important geometry, expected dimensions, orientation, and whether textures are required.
+
+Inspect the imported mesh before rigging, scattering, animation, or export.
 
 ## Audio
 
-Describe the sound event, environment, intensity, duration, perspective, and looping behavior when relevant. Verify the imported asset and audition it before declaring the result suitable.
+Describe the sound event, setting, intensity, duration, listener perspective, and looping behavior. Audition the result in context.
 
 ## Motion
 
-Describe the performer or object, action, timing, direction, contacts, and transitions. Prepare trajectories, animation sources, skeleton information, and retargeting data exactly as required by the live definition. Respect frame-rate and range validation.
+Describe the performer, action, timing, direction, contacts, and transition points. Supply trajectories, source clips, skeleton data, and retargeting inputs exactly as the live tool requires.
 
-For edit or stitch workflows, identify source clips and desired transition boundaries before submission.
+## Iterate with intent
 
-## Iteration
-
-Treat a variant or retry as a new generation with possible cost. Explain what failed verification and what will change before requesting authorization for another call. Prefer targeted correction over blind repetition.
+A retry or variant may consume more credits. Explain what failed inspection and what will change in the next attempt. Prefer a narrow correction to another generic prompt.

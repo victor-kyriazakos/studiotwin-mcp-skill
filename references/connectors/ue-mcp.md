@@ -1,74 +1,53 @@
-# Connector: Unreal Engine MCP
+# Unreal Engine connector
 
-**Status: live.** This is the primary, supported StudioTwin MCP surface today.
+**Status: live.** StudioTwin runs inside Unreal Editor and exposes its toolkits through Epic's Unreal MCP plugin.
 
-## What it is
+## Architecture
 
-StudioTwin does not ship a standalone MCP server. Its MCP surface is the
-**StudioTwin Unreal Engine plugin** exposed through Epic's **Unreal MCP plugin**
-(`ModelContextProtocol`, shown as "Unreal MCP" in the Plugin Browser). The Unreal
-MCP server runs inside the Unreal Editor process and advertises the StudioTwin
-toolkits to an MCP client (Claude Code, Cursor, VS Code, Gemini, Codex, …) over a
-**local** HTTP connection (documented default `http://127.0.0.1:8000/mcp`).
+The StudioTwin plugin handles cloud generation and editor integration. Epic's `ModelContextProtocol` plugin runs the local MCP server inside Unreal Editor and advertises the available toolsets to clients such as Claude Code, Cursor, VS Code, Gemini, and Codex.
 
-Consequences that shape every session:
+The documented default endpoint is `http://127.0.0.1:8000/mcp`. It has no transport authentication and must remain local.
 
-- **Live tool definitions are the authority.** The docs below describe the
-  human-facing plugin UI; the MCP tool names, schemas, defaults, costs, and
-  async behavior come from runtime discovery, not from this file. Never guess a
-  tool name or schema, and never copy a credit figure into a paid call — read the
-  live definition. (See the operating policy in `SKILL.md`.)
-- **It is local and unauthenticated at the transport.** Do not expose the server
-  for remote access. Cloud auth to StudioTwin is via the plugin's `st_` API key,
-  configured in Project Settings — never in chat or MCP arguments.
-- **Generation is cloud-backed and metered in credits.** Tools submit to the
-  StudioTwin cloud service; most are asynchronous (submit once → poll the job id).
-- **Many tools also mutate the open Unreal project** (import assets, place world
-  content, load animation, create sequences). Treat those as state-changing and
-  confirm scope. Downloaded intermediates land in `<ProjectRoot>/.studiotwin/`.
-
-## Capability groups (toolkits)
-
-Stable orientation only — discover the live tools at runtime. Each maps to a
-StudioTwin toolkit visible under **Tools → STUDIOTWIN** in the Editor:
-
-| Toolkit     | What it does (image/text → asset)                          | Docs |
-| ----------- | ---------------------------------------------------------- | ---- |
-| Motion      | human animation from text/trajectory; edit, stitch, retarget, load | https://docs.studiotwin.ai/docs/plugin/toolkits/motion-toolkit/ |
-| Environment | HDR environment maps from text/image; upscale, outpaint; env-map → world | https://docs.studiotwin.ai/docs/plugin/toolkits/environment-toolkit/ |
-| Mesh        | 3D mesh from an image reference                            | https://docs.studiotwin.ai/docs/plugin/toolkits/mesh-toolkit/ |
-| Material    | PBR material from texture/image/text references           | https://docs.studiotwin.ai/docs/plugin/toolkits/material-toolkit/ |
-| Audio       | sound effects from a text brief                            | https://docs.studiotwin.ai/docs/plugin/toolkits/audio-toolkit/ |
-
-Detailed capability-selection and prompting guidance: [../capabilities.md](../capabilities.md),
-[../content-guidance.md](../content-guidance.md). Job / import / mutation handling:
-[../operations.md](../operations.md).
+StudioTwin's cloud API uses the `st_` key stored in Unreal Project Settings. Never place that key in chat, MCP arguments, logs, or source control.
 
 ## Requirements
 
-- Unreal Engine **5.6, 5.7, or 5.8** — each StudioTwin build is compiled against
-  one specific engine version; the plugin build must match the project's engine.
-- **StudioTwin UE plugin `3.0.0` or newer.** The MCP surface exists only in
-  `3.0.0+`. Earlier builds (e.g. `2.6.1`) install and expose the Editor toolkits
-  but advertise **no MCP tools**, so discovery finds nothing regardless of engine
-  version. If the installed build is below `3.0.0`, treat MCP as unavailable and
-  ask the user to update from Fab (see `../onboarding/plugins.md`) before retrying.
-- StudioTwin UE plugin installed + enabled, with a valid `st_` API key.
-- Unreal MCP plugin (`ModelContextProtocol`) enabled; optional **All Toolsets**
-  plugin to also expose Unreal's default toolsets. The Toolset Registry is a
-  dependency of Unreal MCP and is enabled automatically.
+- Unreal Engine 5.6, 5.7, or 5.8;
+- the StudioTwin build compiled for that exact engine version;
+- StudioTwin plugin 3.0.0 or newer;
+- Epic's Unreal MCP plugin enabled;
+- a valid StudioTwin API key;
+- the Unreal MCP server started in the intended project.
 
-Full install, server-start, client-config, and first-run flow: [../setup.md](../setup.md).
-User onboarding (account, API key, plugin download): [../onboarding/register.md](../onboarding/register.md),
-[../onboarding/plugins.md](../onboarding/plugins.md).
+StudioTwin builds before 3.0.0 expose editor toolkits but do not register MCP tools. Update before troubleshooting discovery further.
+
+## Capability groups
+
+Discover the current tools at runtime. The stable product groups are:
+
+- Motion: generate, edit, stitch, import, and retarget animation where supported.
+- Environment: generate or expand environment maps and derive world content.
+- Mesh: generate 3D meshes from source images and import them.
+- Material: generate PBR material content from text, images, or textures.
+- Audio: generate sound effects from a written brief.
+
+The live definition controls each tool's schema, cost, and async behavior.
+
+## Operating notes
+
+Most cloud generations are asynchronous. Submit once, record the job ID, and poll it. Some workflows also import assets, add actors, load animation, or create sequences in the open project.
+
+Before a mutation, confirm the active project, level, source asset, destination content path, and whether saving is allowed. StudioTwin may place downloaded source files under `<ProjectRoot>/.studiotwin/`.
+
+Afterward, verify object paths, asset classes, expected material or animation roles, actors, sequences, and warnings. A completed job can still leave a partial import.
+
+## Setup
+
+See [../setup.md](../setup.md) for installation, server startup, client configuration, and first discovery.
 
 ## Authorities
 
 - Epic Unreal MCP: https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-mcp-in-unreal-editor
-- StudioTwin plugin install: https://docs.studiotwin.ai/docs/plugin/installation/
-- StudioTwin toolkits index: https://docs.studiotwin.ai/docs/plugin/toolkits/
-
-> Credit costs per tool are published at
-> https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work but change
-> over time and are per-model. Use them for user-facing onboarding estimates
-> only; for a paid MCP call, the **live tool definition** is authoritative.
+- StudioTwin installation: https://docs.studiotwin.ai/docs/plugin/installation/
+- StudioTwin toolkits: https://docs.studiotwin.ai/docs/plugin/toolkits/
+- StudioTwin credits: https://docs.studiotwin.ai/docs/dashboard/guides/how-credits-work
