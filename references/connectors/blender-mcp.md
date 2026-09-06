@@ -113,6 +113,5 @@ A completed cloud job is not enough. Verify the imported scene state and render 
 
 ## Authorities
 
-- [StudioTwin Blender add-on source](https://gitlab.com/realtwin/virtual-productions/studiotwin-blender-addon)
 - [MCP for Blender](https://github.com/ahujasid/blender-mcp)
 - [MCP for Blender package](https://pypi.org/project/blender-mcp/)
