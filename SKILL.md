@@ -2,7 +2,7 @@
 name: "studiotwin-mcp"
 description: "Generate environments, PBR materials, 3D meshes, character motion, and sound with StudioTwin, then bring the results into Unreal Engine, Blender, or a web pipeline. Use when an agent needs StudioTwin setup, generation, asset transfer, scene import, or troubleshooting through MCP."
 author: RealTwin Solutions Inc.
-version: "2.0.0"
+version: "1.4.0"
 license: MIT
 ---
 
@@ -28,7 +28,7 @@ git clone https://github.com/realtwin/studiotwin-mcp-skill
 
 StudioTwin uses one cloud asset library across its connectors.
 
-- **Blender: live.** The StudioTwin Blender add-on generates and imports assets from the 3D View sidebar. Its agent bridge works with the third-party MCP for Blender project when StudioTwin verbs appear in live discovery. See [references/connectors/blender-mcp.md](references/connectors/blender-mcp.md).
+- **Blender sidebar: live; MCP agent bridge: blocked.** The StudioTwin Blender add-on generates and imports assets from the 3D View sidebar. Its current bridge cannot register StudioTwin tools with MCP for Blender 1.9.1. Do not present Blender agent control as available until a compatible bridge ships. See [references/connectors/blender-mcp.md](references/connectors/blender-mcp.md).
 - **Unreal Engine: live.** The StudioTwin plugin exposes its toolkits through Epic's Unreal MCP plugin inside the Editor. See [references/connectors/ue-mcp.md](references/connectors/ue-mcp.md).
 - **Remote web MCP: not yet a standalone public connector.** StudioTwin uses this host-neutral surface behind connector workflows. Do not advertise a public endpoint until StudioTwin publishes one. See [references/connectors/web-mcp.md](references/connectors/web-mcp.md).
 
@@ -45,7 +45,7 @@ Do not rerun a paid generation just to move an asset between hosts. Resolve or i
 1. Discover the available MCP servers and tools.
 2. Identify the host from the tools that are actually present:
    - StudioTwin toolkits behind `ModelContextProtocol` at a local Unreal endpoint: use the Unreal connector.
-   - Blender scene, object, screenshot, or code-execution tools: use the Blender connector. Confirm the separate `studiotwin_*` verbs before attempting StudioTwin work through the agent.
+   - Blender scene, object, screenshot, or code-execution tools without `studiotwin_*`: StudioTwin agent control is unavailable. The operator can still use the StudioTwin sidebar.
    - `studiotwin_*` platform tools without an editor: use the remote connector only if the deployment is authorized.
 3. Read the selected connector reference.
 4. Read the live definition for every tool you intend to call.

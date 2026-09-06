@@ -15,9 +15,9 @@ The shortest working sequence is:
 5. Configure the MCP client to launch `uvx blender-mcp`.
 6. Start **MCP for Blender** from the 3D View sidebar.
 7. Start the MCP client and list live tools.
-8. Confirm the four `studiotwin_*` bridge verbs before asking the agent to generate or import.
+8. Confirm that no StudioTwin agent workflow is promised until a compatible bridge release ships.
 
-The client talks to `blender-mcp` over stdio. The Python server talks to its Blender add-on over a local TCP socket on `localhost:9876` by default. Keep that socket local.
+The client talks to `blender-mcp` over stdio. The Python server talks to its Blender add-on over a local TCP socket on `localhost:9876` by default. Keep that socket local. This connection exposes MCP for Blender tools, not the four intended StudioTwin verbs.
 
 ## Unreal Engine setup
 

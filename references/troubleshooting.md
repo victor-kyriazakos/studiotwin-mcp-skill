@@ -25,9 +25,9 @@ Do not invent a server command, port, package path, or tool name.
 
 ## Blender tools appear but StudioTwin tools do not
 
-The socket connection works but the StudioTwin bridge did not register. Confirm the StudioTwin add-on is enabled, inspect Blender's console for the bridge registration message, and compare the installed MCP for Blender version with the StudioTwin release notes.
+This is the expected state with MCP for Blender 1.9.1. The StudioTwin bridge runs inside Blender while the MCP server runs in a separate `uvx` environment, and upstream exposes no dynamic handler-registration API.
 
-Current MCP for Blender releases can change their internal registration API. Do not use arbitrary Blender Python as a substitute for missing StudioTwin verbs. The sidebar workflow remains available while the bridge issue is fixed.
+Do not use arbitrary Blender Python as a substitute for missing StudioTwin verbs. Use the StudioTwin sidebar until a compatible bridge ships.
 
 ## A tool differs from this guide
 

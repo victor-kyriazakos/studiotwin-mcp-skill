@@ -4,13 +4,12 @@ Choose the host first. Unreal Engine and Blender use different local components 
 
 ## Blender
 
-StudioTwin's Blender workflow uses two add-ons: StudioTwin for generation and import, and the third-party MCP for Blender add-on for agent control.
+StudioTwin's Blender sidebar handles generation and import. The third-party MCP for Blender add-on can control Blender, but the current StudioTwin bridge cannot register its own tools with MCP for Blender 1.9.1.
 
 Requirements:
 
 - Blender 4.2 or newer for the StudioTwin add-on;
 - the StudioTwin Blender add-on release package;
-- a StudioTwin-supported MCP for Blender release;
 - the MCP for Blender add-on installed and enabled;
 - the `blender-mcp` server configured in the MCP client;
 - a StudioTwin account and `st_` API key supplied through the connector configuration, never through chat.
@@ -32,7 +31,7 @@ Configure the MCP client to run `uvx blender-mcp`, enable **Interface: MCP for B
 
 MCP for Blender is a third-party project, not a Blender Foundation product. Its current release enables telemetry by default. Disable it in the add-on preferences or set `DISABLE_TELEMETRY=true` in the MCP server environment when that collection is not wanted.
 
-After setup, discover tools. StudioTwin agent workflows require `studiotwin_generate`, `studiotwin_job_status`, `studiotwin_import_asset`, and `studiotwin_import_outputs`. If those verbs are missing, the StudioTwin sidebar remains available but the MCP bridge is not active; stop and report the version mismatch. Do not assume upstream MCP for Blender 1.9.1 is bridge-compatible until StudioTwin publishes a matching add-on build.
+Installing both add-ons does not currently expose StudioTwin MCP verbs. Use MCP for Blender for its own scene tools and use the StudioTwin sidebar for StudioTwin generation and import. Do not attempt StudioTwin agent calls until a compatible bridge release is documented.
 
 ## Unreal Engine
 

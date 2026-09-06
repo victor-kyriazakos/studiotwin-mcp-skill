@@ -1,8 +1,8 @@
 # Blender connector
 
-**Status: live.** The StudioTwin Blender add-on generates materials, environment maps, meshes, and sound from the 3D View sidebar. It downloads completed outputs and imports supported assets into the current scene.
+**Status: sidebar workflow live; MCP agent bridge blocked.** The StudioTwin Blender add-on generates materials, environment maps, meshes, and sound from the 3D View sidebar. It downloads completed outputs and imports supported assets into the current scene.
 
-Agent control uses the third-party [MCP for Blender](https://github.com/ahujasid/blender-mcp) project. It is not made by Blender or the Blender Foundation.
+Planned agent control uses the third-party [MCP for Blender](https://github.com/ahujasid/blender-mcp) project. It is not made by Blender or the Blender Foundation.
 
 ## Components
 
@@ -31,7 +31,7 @@ StudioTwin requires Blender 4.2 or newer.
 4. Open the StudioTwin add-on preferences and enter the `st_` API key.
 5. Leave the production API URL at `https://api.studiotwin.ai` unless StudioTwin supplied another deployment URL.
 
-For agent control, install MCP for Blender:
+MCP for Blender itself can be installed with:
 
 ```bash
 uvx blender-mcp install-addon
@@ -45,20 +45,18 @@ uvx blender-mcp
 
 Enable **Interface: MCP for Blender** in Blender, open the **MCP for Blender** sidebar, and start its server. Run one MCP server instance per Blender session.
 
-## Confirm the bridge
+## Agent bridge status
 
-Discover the live tool set before using StudioTwin through an agent. The StudioTwin add-on currently defines these bridge verbs:
+The StudioTwin add-on defines these intended bridge verbs:
 
 - `studiotwin_generate(function_name, inputs, kind)` submits a job and schedules automatic import;
 - `studiotwin_job_status(job_id)` returns platform status;
 - `studiotwin_import_asset(asset_id, kind)` resolves and imports an existing asset;
 - `studiotwin_import_outputs(job_id, kind)` imports the outputs of a completed job.
 
-Treat the live schemas as authoritative. If these verbs do not appear, the MCP bridge is not active. The StudioTwin sidebar can still generate and import assets, but the agent must stop rather than inventing a substitute call.
+These verbs do not register through the current setup. The StudioTwin bridge runs inside Blender and imports `blender_mcp.server`, but `uvx` runs that package in a separate Python environment. MCP for Blender 1.9.1 also declares its tools statically with `@mcp.tool()` and exposes neither `register_handler` nor `add_handler`.
 
-The bridge uses MCP for Blender's internal registration surface. Upstream releases can change that surface. Check Blender's console for either a registration list or a message that the bridge needs an update.
-
-The current StudioTwin source probes for `register_handler` or `add_handler`. MCP for Blender 1.9.1 does not expose either symbol. Treat 1.9.1 as unverified for agent control until a matching StudioTwin add-on ships. This does not affect the StudioTwin sidebar workflow.
+Blender agent control is therefore blocked until StudioTwin ships a compatible integration in the external MCP server or another supported registration contract. Do not tell users that installing both add-ons enables the four StudioTwin verbs. The StudioTwin sidebar remains available.
 
 ## Generate from Blender
 

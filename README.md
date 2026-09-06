@@ -20,7 +20,7 @@ git clone https://github.com/realtwin/studiotwin-mcp-skill
 
 ## Connectors
 
-- **Blender is live.** The StudioTwin Blender add-on supports sidebar generation and direct scene import. Agent control uses the third-party MCP for Blender project and must confirm StudioTwin bridge verbs through discovery.
+- **Blender sidebar is live. MCP agent control is not.** The StudioTwin add-on supports sidebar generation and scene import. Its current bridge cannot register tools with MCP for Blender 1.9.1, so Blender agent control remains blocked pending a compatible release.
 - **Unreal Engine is live.** StudioTwin toolkits run through Epic's Unreal MCP plugin inside the Editor.
 - **Remote web MCP is not yet sold as a standalone public connector.** It supports connector workflows without duplicating the cloud generation contract.
 
