@@ -28,7 +28,7 @@ git clone https://github.com/realtwin/studiotwin-mcp-skill
 
 StudioTwin uses one cloud asset library across its connectors.
 
-- **Blender sidebar: live; MCP agent bridge: blocked.** The StudioTwin Blender add-on generates and imports assets from the 3D View sidebar. Its current bridge cannot register StudioTwin tools with MCP for Blender 1.9.1. Do not present Blender agent control as available until a compatible bridge ships. See [references/connectors/blender-mcp.md](references/connectors/blender-mcp.md).
+- **Blender sidebar: implemented for release recipients; public setup pending.** The StudioTwin Blender add-on generates and imports assets from the 3D View sidebar, but no public package location is documented. Its current bridge cannot register StudioTwin tools with MCP for Blender 1.9.1. Do not present Blender as self-service GA or advertise agent control until StudioTwin publishes the package and a compatible bridge. See [references/connectors/blender-mcp.md](references/connectors/blender-mcp.md).
 - **Unreal Engine: live.** The StudioTwin plugin exposes its toolkits through Epic's Unreal MCP plugin inside the Editor. See [references/connectors/ue-mcp.md](references/connectors/ue-mcp.md).
 - **Remote web MCP: not yet a standalone public connector.** StudioTwin uses this host-neutral surface behind connector workflows. Do not advertise a public endpoint until StudioTwin publishes one. See [references/connectors/web-mcp.md](references/connectors/web-mcp.md).
 
@@ -87,7 +87,7 @@ For asynchronous jobs:
 
 Before an editor mutation, confirm the open file or project, destination collection or content path, source asset, scale and orientation expectations, and whether saving is allowed.
 
-Inspect first. In Blender, prefer the purpose-built summary and navigation tools before `execute_blender_code`. In Unreal, verify object paths and the active level before placement or sequence work.
+Inspect first. In Blender, prefer the purpose-built summary and navigation tools before `execute_blender_code`. That tool runs Python with the Blender process's filesystem, network, process, and scene privileges. Never run untrusted code; obtain explicit approval before using those privileges or making destructive scene changes. In Unreal, verify object paths and the active level before placement or sequence work.
 
 ### Verify the deliverable
 

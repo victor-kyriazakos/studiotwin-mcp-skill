@@ -9,14 +9,14 @@ StudioTwin's Blender sidebar handles generation and import. The third-party MCP 
 Requirements:
 
 - Blender 4.2 or newer for the StudioTwin add-on;
-- the StudioTwin Blender add-on release package;
+- the StudioTwin Blender add-on release package supplied through a StudioTwin account or release channel;
 - the MCP for Blender add-on installed and enabled;
 - the `blender-mcp` server configured in the MCP client;
 - a StudioTwin account and `st_` API key supplied through the connector configuration, never through chat.
 
 Install StudioTwin:
 
-1. Download the StudioTwin Blender add-on zip supplied with the release.
+1. Obtain the StudioTwin Blender add-on zip through the StudioTwin release channel available to the account. Stop if no package was supplied; there is no verified public download location.
 2. Open **Edit > Preferences > Add-ons > Install** and select the zip.
 3. Enable **StudioTwin**.
 4. Open the StudioTwin preferences and enter the API key. The default production API URL is `https://api.studiotwin.ai`.
@@ -29,7 +29,7 @@ uvx blender-mcp install-addon
 
 Configure the MCP client to run `uvx blender-mcp`, enable **Interface: MCP for Blender**, then start the socket server from the Blender sidebar. The default host is `localhost` and the default port is `9876`. Run only one MCP server instance for a Blender session.
 
-MCP for Blender is a third-party project, not a Blender Foundation product. Its current release enables telemetry by default. Disable it in the add-on preferences or set `DISABLE_TELEMETRY=true` in the MCP server environment when that collection is not wanted.
+MCP for Blender is a third-party project, not a Blender Foundation product. Its current release enables telemetry by default. Turning it off in the add-on preferences withholds private payloads but retains minimal anonymous usage records. Set `DISABLE_TELEMETRY=true` in the MCP server environment to disable collection completely.
 
 Installing both add-ons does not currently expose StudioTwin MCP verbs. Use MCP for Blender for its own scene tools and use the StudioTwin sidebar for StudioTwin generation and import. Do not attempt StudioTwin agent calls until a compatible bridge release is documented.
 

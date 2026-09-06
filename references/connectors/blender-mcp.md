@@ -1,6 +1,6 @@
 # Blender connector
 
-**Status: sidebar workflow live; MCP agent bridge blocked.** The StudioTwin Blender add-on generates materials, environment maps, meshes, and sound from the 3D View sidebar. It downloads completed outputs and imports supported assets into the current scene.
+**Status: sidebar implementation available to release recipients; public setup pending; MCP agent bridge blocked.** The StudioTwin Blender add-on generates materials, environment maps, meshes, and sound from the 3D View sidebar. It downloads completed outputs and imports supported assets into the current scene. StudioTwin has not published a public package location, so this skill cannot offer a self-service GA install path.
 
 Planned agent control uses the third-party [MCP for Blender](https://github.com/ahujasid/blender-mcp) project. It is not made by Blender or the Blender Foundation.
 
@@ -25,7 +25,7 @@ The default socket is `localhost:9876`. Keep it local.
 
 StudioTwin requires Blender 4.2 or newer.
 
-1. Download the StudioTwin Blender add-on zip supplied with the release.
+1. Obtain the StudioTwin Blender add-on zip through the StudioTwin release channel available to your account. Stop if no package was supplied; there is no verified public download location.
 2. In Blender, open **Edit > Preferences > Add-ons > Install**.
 3. Select the zip and enable **StudioTwin**.
 4. Open the StudioTwin add-on preferences and enter the `st_` API key.
@@ -91,9 +91,9 @@ Recent upstream changes include:
 - row-size, bounding-box, UTF-8 socket, and screenshot handling fixes;
 - telemetry and trajectory-capture changes.
 
-MCP for Blender telemetry is enabled by default. Disable it in the add-on preferences or set `DISABLE_TELEMETRY=true` in the MCP server environment when collection is not wanted. Upstream states that collected prompts, code, screenshots, and trajectory data may be used for research and model training.
+MCP for Blender telemetry is enabled by default. Turning telemetry off in the add-on preferences withholds private payloads, but the server still sends minimal anonymous usage records. Set `DISABLE_TELEMETRY=true` in the MCP server environment to disable collection completely. With consent enabled, upstream states that prompts, code, screenshots, and trajectory data may be used for research and model training.
 
-Safe mode reduces the scope of arbitrary Python execution but does not remove the need to inspect the scene, confirm mutations, and save deliberately.
+`BLENDER_MCP_SAFE_MODE=1` validates only Python sent through the MCP server's `execute_blender_code` tool. It is not a Blender sandbox and does not cover commands sent directly to the local socket. Without safe mode, that tool runs arbitrary Python with the Blender process's filesystem, network, process, and scene privileges. Never execute untrusted code. Require explicit approval for those privileges, destructive scene changes, and saves.
 
 ## Verify the result
 

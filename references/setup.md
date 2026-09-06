@@ -9,7 +9,7 @@ See [connectors/blender-mcp.md](connectors/blender-mcp.md) for the architecture 
 The shortest working sequence is:
 
 1. Run Blender 4.2 or newer.
-2. Install and enable the StudioTwin add-on zip.
+2. Obtain the StudioTwin add-on zip through the release channel available to the account, then install and enable it. Stop if no package was supplied; there is no verified public download location.
 3. Enter the StudioTwin API key in the add-on preferences.
 4. Run `uvx blender-mcp install-addon` and enable **Interface: MCP for Blender**.
 5. Configure the MCP client to launch `uvx blender-mcp`.
